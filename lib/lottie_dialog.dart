@@ -9,13 +9,18 @@ class LottieView extends StatefulWidget {
 }
 
 class _LottieViewState extends State<LottieView> with TickerProviderStateMixin {
-  final lottiePath = '123492-success-send.json';
+  final lottiefilePath = '123492-success-send.json';
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(vsync: this)
+      ..addListener(() {
+        if (_controller.isCompleted) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      });
   }
 
   @override
@@ -27,10 +32,11 @@ class _LottieViewState extends State<LottieView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Lottie.asset(
-      lottiePath,
-      repeat: false,
+      lottiefilePath,
       controller: _controller,
-      onLoaded: (composition) => _controller.forward(),
+      onLoaded: (composition) => _controller
+        ..duration = composition.duration
+        ..forward(),
     );
   }
 }
